@@ -2,17 +2,23 @@ package com.franciscoreina.resilientpayment.client;
 
 import com.franciscoreina.resilientpayment.dto.PartnerTransferRequest;
 import com.franciscoreina.resilientpayment.dto.PartnerTransferResponse;
+import io.github.resilience4j.retry.annotation.Retry;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class PartnerClient {
 
     private final RestClient restClient;
 
+    @Retry(name = "partnerService")
     public PartnerTransferResponse sendMoney(PartnerTransferRequest request) {
+        log.info("Calling partner for transferId={}", request.transferId());
+
         return restClient.post()
                 .uri("/partner/send")
                 .body(request)

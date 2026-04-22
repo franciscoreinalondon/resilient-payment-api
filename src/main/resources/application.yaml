@@ -6,3 +6,13 @@ management:
 
 server:
   port: 8080
+
+resilience4j:
+  retry:
+    instances:
+      partnerService:
+        max-attempts: 3
+        wait-duration: 1s
+        retry-exceptions:
+          - org.springframework.web.client.RestClientException
+          - org.springframework.web.server.ResponseStatusException
