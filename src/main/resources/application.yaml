@@ -10,9 +10,18 @@ server:
 resilience4j:
   retry:
     instances:
-      partnerService:
+      partnerClient:
         max-attempts: 3
         wait-duration: 1s
         retry-exceptions:
           - org.springframework.web.client.RestClientException
           - org.springframework.web.server.ResponseStatusException
+
+  circuitbreaker:
+    instances:
+      partnerClient:
+        sliding-window-size: 5 # Number of recent calls used to calculate the failure rate
+        minimum-number-of-calls: 5 # Number of calls required before the circuit breaker evaluate failures
+        failure-rate-threshold: 50  # Opens the circuit if 50% or more of the recorded calls fail
+        wait-duration-in-open-state: 10s # How long the circuit stays OPEN before trying again
+        permitted-number-of-calls-in-half-open-state: 2 # Number of trial calls allowed when the circuit is HALF_OPEN

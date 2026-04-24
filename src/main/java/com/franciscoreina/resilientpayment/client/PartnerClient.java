@@ -2,6 +2,7 @@ package com.franciscoreina.resilientpayment.client;
 
 import com.franciscoreina.resilientpayment.dto.PartnerTransferRequest;
 import com.franciscoreina.resilientpayment.dto.PartnerTransferResponse;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +18,8 @@ public class PartnerClient {
 
     private final RestClient restClient;
 
-    @Retry(name = "partnerClient", fallbackMethod = "sendMoneyFallback")
+    @Retry(name = "partnerClient")
+    @CircuitBreaker(name = "partnerClient", fallbackMethod = "sendMoneyFallback")
     public PartnerTransferResponse sendMoney(PartnerTransferRequest request) {
         log.info("Calling partner for transferId={}", request.transferId());
 
